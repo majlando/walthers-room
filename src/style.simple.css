@@ -1,0 +1,24 @@
+/* Simplified CSS - Remove Google Fonts and Material Icons to reduce dependencies */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Minimal base styles */
+@layer base {
+  body {
+    @apply min-h-screen bg-base-100 text-base-content;
+  }
+}
+
+/* Essential component styles only */
+@layer components {
+  /* Simple hover effect */
+  .card:hover {
+    @apply shadow-lg;
+  }
+  
+  /* Modal backdrop blur */
+  .modal-backdrop {
+    @apply backdrop-blur-sm;
+  }
+}

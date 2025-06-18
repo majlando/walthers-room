@@ -1,0 +1,35 @@
+{
+  "name": "walthers-room",
+  "description": "Walther's Room - Interactive web application showcasing flags and information about countries from around the world",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "Walther's Room",
+    "walthersroom",
+    "flags",
+    "countries",
+    "geography",
+    "vite",
+    "typescript",
+    "tailwind"
+  ],
+  "author": "Walther's Room",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "daisyui": "^5.0.43"
+  }
+}
