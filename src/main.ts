@@ -1,5 +1,5 @@
-import './style.css'
-import { FlagsApp } from './components/FlagsApp'
+import './style.simplified.css'
+import { FlagsApp } from './components/FlagsApp.simplified'
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {

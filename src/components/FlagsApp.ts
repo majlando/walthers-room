@@ -1,43 +1,18 @@
-import type { Country, CountryFilters } from '../types/country';
+import type { Country } from '../types/country';
 import { CountriesService } from '../services/countriesService';
-import { CountryCard } from './CountryCard';
-import { CountryModal } from './CountryModal';
-import { debounce, sortCountries } from '../utils/helpers';
-import { ThemeManager } from '../utils/themeManager';
-import { FavoritesManager } from '../utils/favoritesManager';
-import { FavoritesPanel } from './FavoritesPanel';
-import { CountryComparison } from './CountryComparison';
+import { formatPopulation, formatArea } from '../utils/helpers';
 
 export class FlagsApp {
   private countries: Country[] = [];
   private filteredCountries: Country[] = [];
-  private modal: CountryModal;
-  private themeManager: ThemeManager;
-  private favoritesManager: FavoritesManager;
-  private favoritesPanel: FavoritesPanel;
-  private comparisonModal: CountryComparison;
-  private selectedCountries: Country[] = [];
-  private filters: CountryFilters = {
-    region: 'all',
-    searchTerm: '',
-    sortBy: 'name',
-    sortOrder: 'asc'
-  };
-  private isLoading = false;  constructor() {
-    this.modal = new CountryModal();
-    this.themeManager = ThemeManager.getInstance();
-    this.favoritesManager = FavoritesManager.getInstance();
-    this.favoritesPanel = new FavoritesPanel(this.onFavoriteCountrySelect.bind(this));
-    this.comparisonModal = new CountryComparison(this.onComparisonClose.bind(this));
+  private searchTerm = '';
+  private selectedRegion = 'all';  constructor() {
     this.init();
   }
+
   private async init(): Promise<void> {
     this.createLayout();
     this.attachEventListeners();
-    this.setupKeyboardShortcuts();
-    this.enhanceNoResultsHandlers();
-    this.enhanceAccessibility();
-    this.setupFavoritesCallbacks();
     await this.loadCountries();
   }
   private createLayout(): void {
