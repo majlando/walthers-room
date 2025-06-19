@@ -12,15 +12,8 @@ export class CountryCard {
   }
 
   render(): string {
-    const {
-      name,
-      flags,
-      population,
-      area,
-      capital,
-      region,
-      maps
-    } = this.country;
+    const { name, flags, population, area, capital, region, maps } =
+      this.country;
 
     const capitalDisplay = capital ? capital.join(', ') : 'No capital';
     const isFavorite = this.favoritesManager.isFavorite(this.country.cca2);
@@ -96,7 +89,9 @@ export class CountryCard {
             
             <!-- Action Buttons Row 2 -->
             <div class="flex gap-2 w-full">
-              ${maps?.googleMaps ? `
+              ${
+                maps?.googleMaps
+                  ? `
                 <a 
                   href="${maps.googleMaps}" 
                   target="_blank" 
@@ -106,12 +101,14 @@ export class CountryCard {
                   <span class="material-icons text-sm">map</span>
                   <span>Map</span>
                 </a>
-              ` : `
+              `
+                  : `
                 <div class="btn btn-sm btn-disabled flex-1 cursor-not-allowed">
                   <span class="material-icons text-sm">map_off</span>
                   <span>No Map</span>
                 </div>
-              `}
+              `
+              }
               <button 
                 class="btn btn-sm btn-primary flex-1 country-details-btn hover-lift"
                 data-country='${JSON.stringify(this.country)}'

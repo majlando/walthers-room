@@ -43,16 +43,18 @@ export class ThemeManager {
 
   private getSystemPreference(): Theme {
     if (typeof window !== 'undefined' && window.matchMedia) {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
     }
     return 'light';
   }
   private applyTheme(theme: Theme): void {
     const root = document.documentElement;
-    
+
     // Set DaisyUI theme attribute
     root.setAttribute('data-theme', theme);
-    
+
     // Also set the class for compatibility
     if (theme === 'dark') {
       root.classList.add('dark');

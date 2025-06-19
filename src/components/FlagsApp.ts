@@ -6,7 +6,8 @@ export class FlagsApp {
   private countries: Country[] = [];
   private filteredCountries: Country[] = [];
   private searchTerm = '';
-  private selectedRegion = 'all';  constructor() {
+  private selectedRegion = 'all';
+  constructor() {
     this.init();
   }
 
@@ -17,7 +18,8 @@ export class FlagsApp {
   }
   private createLayout(): void {
     const app = document.getElementById('app');
-    if (!app) return;    app.innerHTML = `
+    if (!app) return;
+    app.innerHTML = `
       <div class="min-h-screen bg-base-200">
         <!-- Sticky Header -->
         <header class="sticky top-0 z-50 glass-effect border-b border-base-300">
@@ -198,7 +200,7 @@ export class FlagsApp {
     if (themeToggle) {
       // Update theme toggle icon based on current theme
       this.updateThemeToggleIcon();
-      
+
       themeToggle.addEventListener('click', () => {
         this.themeManager.toggleTheme();
         this.updateThemeToggleIcon();
@@ -212,7 +214,7 @@ export class FlagsApp {
         this.filters.searchTerm = value;
         this.applyFilters();
       }, 300);
-      
+
       searchInput.addEventListener('input', (e) => {
         const target = e.target as HTMLInputElement;
         debouncedSearch(target.value);
@@ -261,7 +263,7 @@ export class FlagsApp {
           console.error('Error parsing country data:', error);
         }
       }
-    });    // Favorites button
+    }); // Favorites button
     const favoritesBtn = document.getElementById('favorites-button');
     if (favoritesBtn) {
       favoritesBtn.addEventListener('click', () => {
@@ -292,7 +294,7 @@ export class FlagsApp {
     // Favorite and comparison buttons (event delegation)
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
-      
+
       // Handle favorite button clicks
       const favoriteBtn = target.closest('.favorite-btn') as HTMLElement;
       if (favoriteBtn && favoriteBtn.dataset.country) {
@@ -303,7 +305,7 @@ export class FlagsApp {
           console.error('Error parsing country data for favorite:', error);
         }
       }
-      
+
       // Handle compare button clicks
       const compareBtn = target.closest('.compare-btn') as HTMLElement;
       if (compareBtn && compareBtn.dataset.country) {
@@ -322,7 +324,9 @@ export class FlagsApp {
     if (icon && themeToggle) {
       const isDark = this.themeManager.getCurrentTheme() === 'dark';
       icon.textContent = isDark ? 'dark_mode' : 'light_mode';
-      themeToggle.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+      themeToggle.title = isDark
+        ? 'Switch to light mode'
+        : 'Switch to dark mode';
     }
   }
 
@@ -330,10 +334,10 @@ export class FlagsApp {
     try {
       this.isLoading = true;
       this.showLoading(true);
-      
+
       this.countries = await CountriesService.getAllCountries();
       this.filteredCountries = [...this.countries];
-      
+
       this.applyFilters();
       this.showLoading(false);
     } catch (error) {
@@ -350,31 +354,41 @@ export class FlagsApp {
 
     // Apply region filter
     if (this.filters.region !== 'all') {
-      filtered = filtered.filter(country => country.region === this.filters.region);
+      filtered = filtered.filter(
+        (country) => country.region === this.filters.region
+      );
     }
 
     // Apply search filter
     if (this.filters.searchTerm) {
       const searchTerm = this.filters.searchTerm.toLowerCase();
-      filtered = filtered.filter(country =>
-        country.name.common.toLowerCase().includes(searchTerm) ||
-        country.name.official.toLowerCase().includes(searchTerm) ||
-        (country.capital && country.capital.some(cap => 
-          cap.toLowerCase().includes(searchTerm)
-        ))
+      filtered = filtered.filter(
+        (country) =>
+          country.name.common.toLowerCase().includes(searchTerm) ||
+          country.name.official.toLowerCase().includes(searchTerm) ||
+          (country.capital &&
+            country.capital.some((cap) =>
+              cap.toLowerCase().includes(searchTerm)
+            ))
       );
     }
 
     // Apply sorting
-    filtered = sortCountries(filtered, this.filters.sortBy, this.filters.sortOrder);    this.filteredCountries = filtered;
+    filtered = sortCountries(
+      filtered,
+      this.filters.sortBy,
+      this.filters.sortOrder
+    );
+    this.filteredCountries = filtered;
     this.renderCountries();
     this.updateStats();
     this.updateFilterTags();
     this.updateFilterTags();
-  }  private renderCountries(): void {
+  }
+  private renderCountries(): void {
     const grid = document.getElementById('countries-grid');
     const noResults = document.getElementById('no-results');
-    
+
     if (!grid || !noResults) return;
 
     if (this.filteredCountries.length === 0) {
@@ -382,18 +396,19 @@ export class FlagsApp {
       noResults.classList.remove('hidden');
     } else {
       noResults.classList.add('hidden');
-      
+
       grid.innerHTML = this.filteredCountries
-        .map(country => new CountryCard(country).render())
+        .map((country) => new CountryCard(country).render())
         .join('');
     }
-  }private updateStats(): void {
+  }
+  private updateStats(): void {
     const statsElement = document.getElementById('stats');
     if (!statsElement) return;
 
     const total = this.countries.length;
     const filtered = this.filteredCountries.length;
-    
+
     let statsText = '';
     if (this.isLoading) {
       statsText = 'Loading countries...';
@@ -402,12 +417,14 @@ export class FlagsApp {
     } else {
       statsText = `${filtered} of ${total} countries`;
     }
-    
+
     statsElement.textContent = statsText;
-    
+
     // Announce to screen readers when filtering results
     if (!this.isLoading && filtered !== total) {
-      this.announceToScreenReader(`Showing ${filtered} countries out of ${total} total`);
+      this.announceToScreenReader(
+        `Showing ${filtered} countries out of ${total} total`
+      );
     }
   }
 
@@ -419,12 +436,12 @@ export class FlagsApp {
 
     // Add region filter tag
     if (this.filters.region !== 'all') {
-      const regionEmojis: {[key: string]: string} = {
-        'Africa': '🌍',
-        'Americas': '🌎', 
-        'Asia': '🌏',
-        'Europe': '🇪🇺',
-        'Oceania': '🏝️'
+      const regionEmojis: { [key: string]: string } = {
+        Africa: '🌍',
+        Americas: '🌎',
+        Asia: '🌏',
+        Europe: '🇪🇺',
+        Oceania: '🏝️',
       };
       tags.push(`${regionEmojis[this.filters.region]} ${this.filters.region}`);
     }
@@ -436,30 +453,36 @@ export class FlagsApp {
 
     // Add sort filter tag if not default
     if (this.filters.sortBy !== 'name' || this.filters.sortOrder !== 'asc') {
-      const sortLabels: {[key: string]: string} = {
+      const sortLabels: { [key: string]: string } = {
         'name-asc': '📝 A → Z',
         'name-desc': '📝 Z → A',
         'population-desc': '👥 Most People',
         'population-asc': '👥 Least People',
         'area-desc': '📏 Largest',
-        'area-asc': '📏 Smallest'
+        'area-asc': '📏 Smallest',
       };
       const sortKey = `${this.filters.sortBy}-${this.filters.sortOrder}`;
       tags.push(sortLabels[sortKey] || `Sort: ${this.filters.sortBy}`);
     }
 
-    filterTagsContainer.innerHTML = tags.map(tag => `
+    filterTagsContainer.innerHTML = tags
+      .map(
+        (tag) => `
       <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
         ${tag}
       </span>
-    `).join('');
+    `
+      )
+      .join('');
   }
   private setupKeyboardShortcuts(): void {
     document.addEventListener('keydown', (e) => {
       // Ctrl+K or Cmd+K to focus search
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        const searchInput = document.getElementById('search') as HTMLInputElement;
+        const searchInput = document.getElementById(
+          'search'
+        ) as HTMLInputElement;
         if (searchInput) {
           searchInput.focus();
           searchInput.select();
@@ -478,7 +501,7 @@ export class FlagsApp {
         if (this.selectedCountries.length > 0) {
           this.comparisonModal.show(this.selectedCountries);
         }
-      }      // Ctrl+Shift+R or Cmd+Shift+R to clear all filters
+      } // Ctrl+Shift+R or Cmd+Shift+R to clear all filters
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'R') {
         e.preventDefault();
         this.clearFilters();
@@ -492,7 +515,9 @@ export class FlagsApp {
 
       // Escape to clear search when search is focused
       if (e.key === 'Escape') {
-        const searchInput = document.getElementById('search') as HTMLInputElement;
+        const searchInput = document.getElementById(
+          'search'
+        ) as HTMLInputElement;
         if (searchInput === document.activeElement) {
           searchInput.blur();
           if (searchInput.value) {
@@ -509,16 +534,18 @@ export class FlagsApp {
     // Handle clear search button in no results
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
-      
+
       if (target.closest('#clear-search')) {
-        const searchInput = document.getElementById('search') as HTMLInputElement;
+        const searchInput = document.getElementById(
+          'search'
+        ) as HTMLInputElement;
         if (searchInput) {
           searchInput.value = '';
           this.filters.searchTerm = '';
           this.applyFilters();
         }
       }
-      
+
       if (target.closest('#show-all')) {
         this.clearFilters();
       }
@@ -530,7 +557,8 @@ export class FlagsApp {
     const skipLink = document.createElement('a');
     skipLink.href = '#countries-grid';
     skipLink.textContent = 'Skip to main content';
-    skipLink.className = 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-lg z-50';
+    skipLink.className =
+      'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-lg z-50';
     document.body.insertBefore(skipLink, document.body.firstChild);
 
     // Add aria-live region for dynamic updates
@@ -548,7 +576,10 @@ export class FlagsApp {
     const countriesGrid = document.getElementById('countries-grid');
 
     if (searchInput) {
-      searchInput.setAttribute('aria-label', 'Search countries by name or capital');
+      searchInput.setAttribute(
+        'aria-label',
+        'Search countries by name or capital'
+      );
       searchInput.setAttribute('role', 'searchbox');
     }
 
@@ -582,7 +613,7 @@ export class FlagsApp {
       region: 'all',
       searchTerm: '',
       sortBy: 'name',
-      sortOrder: 'asc'
+      sortOrder: 'asc',
     };
 
     // Reset form inputs
@@ -600,7 +631,7 @@ export class FlagsApp {
   private showLoading(show: boolean): void {
     const loading = document.getElementById('loading');
     const grid = document.getElementById('countries-grid');
-    
+
     if (!loading || !grid) return;
 
     if (show) {
@@ -609,7 +640,8 @@ export class FlagsApp {
     } else {
       loading.classList.add('hidden');
     }
-  }  private showError(message: string): void {
+  }
+  private showError(message: string): void {
     const grid = document.getElementById('countries-grid');
     if (!grid) return;
 
@@ -645,11 +677,13 @@ export class FlagsApp {
 
   private onAddToComparison(country: Country): void {
     if (this.selectedCountries.length >= 3) {
-      alert('You can compare up to 3 countries at once. Please remove one first.');
+      alert(
+        'You can compare up to 3 countries at once. Please remove one first.'
+      );
       return;
     }
-    
-    if (!this.selectedCountries.find(c => c.cca2 === country.cca2)) {
+
+    if (!this.selectedCountries.find((c) => c.cca2 === country.cca2)) {
       this.selectedCountries.push(country);
       this.updateComparisonButton();
     }
@@ -662,13 +696,31 @@ export class FlagsApp {
       if (textSpan) {
         textSpan.textContent = count > 0 ? `Compare (${count})` : 'Compare';
       }
-      
+
       if (count > 0) {
-        button.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:hover:bg-gray-600', 'text-gray-700', 'dark:text-gray-300');
+        button.classList.remove(
+          'bg-gray-100',
+          'hover:bg-gray-200',
+          'dark:bg-gray-700',
+          'dark:hover:bg-gray-600',
+          'text-gray-700',
+          'dark:text-gray-300'
+        );
         button.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white');
       } else {
-        button.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'text-white');
-        button.classList.add('bg-gray-100', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:hover:bg-gray-600', 'text-gray-700', 'dark:text-gray-300');
+        button.classList.remove(
+          'bg-blue-600',
+          'hover:bg-blue-700',
+          'text-white'
+        );
+        button.classList.add(
+          'bg-gray-100',
+          'hover:bg-gray-200',
+          'dark:bg-gray-700',
+          'dark:hover:bg-gray-600',
+          'text-gray-700',
+          'dark:text-gray-300'
+        );
       }
     }
   }
@@ -688,21 +740,43 @@ export class FlagsApp {
       if (textSpan) {
         textSpan.textContent = `Favorites${countDisplay}`;
       }
-      
+
       // Update button style based on whether there are favorites
       if (count > 0) {
-        favoritesBtn.classList.remove('bg-purple-100', 'hover:bg-purple-200', 'dark:bg-purple-700', 'dark:hover:bg-purple-600', 'text-purple-700', 'dark:text-purple-300');
-        favoritesBtn.classList.add('bg-purple-600', 'hover:bg-purple-700', 'text-white');
-        
+        favoritesBtn.classList.remove(
+          'bg-purple-100',
+          'hover:bg-purple-200',
+          'dark:bg-purple-700',
+          'dark:hover:bg-purple-600',
+          'text-purple-700',
+          'dark:text-purple-300'
+        );
+        favoritesBtn.classList.add(
+          'bg-purple-600',
+          'hover:bg-purple-700',
+          'text-white'
+        );
+
         // Update icon to filled heart
         const icon = favoritesBtn.querySelector('.material-icons');
         if (icon) {
           icon.textContent = 'favorite';
         }
       } else {
-        favoritesBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'text-white');
-        favoritesBtn.classList.add('bg-purple-100', 'hover:bg-purple-200', 'dark:bg-purple-700', 'dark:hover:bg-purple-600', 'text-purple-700', 'dark:text-purple-300');
-        
+        favoritesBtn.classList.remove(
+          'bg-purple-600',
+          'hover:bg-purple-700',
+          'text-white'
+        );
+        favoritesBtn.classList.add(
+          'bg-purple-100',
+          'hover:bg-purple-200',
+          'dark:bg-purple-700',
+          'dark:hover:bg-purple-600',
+          'text-purple-700',
+          'dark:text-purple-300'
+        );
+
         // Update icon to outline heart
         const icon = favoritesBtn.querySelector('.material-icons');
         if (icon) {
@@ -721,11 +795,13 @@ export class FlagsApp {
   private showHelpModal(): void {
     // Create help modal dynamically
     const overlay = document.createElement('div');
-    overlay.className = 'fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 transition-all duration-300';
+    overlay.className =
+      'fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 transition-all duration-300';
     overlay.style.display = 'flex';
     overlay.style.alignItems = 'center';
     overlay.style.justifyContent = 'center';
-    overlay.style.padding = '1rem';    overlay.innerHTML = `
+    overlay.style.padding = '1rem';
+    overlay.innerHTML = `
       <div class="modal-box max-w-2xl w-full max-h-[80vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-6">
           <div class="flex items-center space-x-3">

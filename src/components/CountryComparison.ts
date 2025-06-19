@@ -1,5 +1,10 @@
 import type { Country } from '../types/country';
-import { formatPopulation, formatArea, formatCurrencies, formatLanguages } from '../utils/helpers';
+import {
+  formatPopulation,
+  formatArea,
+  formatCurrencies,
+  formatLanguages,
+} from '../utils/helpers';
 
 export class CountryComparison {
   private modal: HTMLElement | null = null;
@@ -66,10 +71,10 @@ export class CountryComparison {
     if (!content) return;
 
     content.innerHTML = this.renderComparison();
-    
+
     // Use DaisyUI modal classes
     this.modal?.classList.add('modal-open');
-    
+
     document.body.style.overflow = 'hidden';
   }
 
@@ -77,7 +82,7 @@ export class CountryComparison {
     // Use DaisyUI modal classes
     this.modal?.classList.remove('modal-open');
     document.body.style.overflow = '';
-    
+
     // Call the onClose callback
     if (this.onClose) {
       this.onClose();
@@ -85,27 +90,32 @@ export class CountryComparison {
   }
 
   private renderComparison(): string {
-    const gridCols = this.countries.length === 2 ? 'grid-cols-2' : 'grid-cols-3';
-    
+    const gridCols =
+      this.countries.length === 2 ? 'grid-cols-2' : 'grid-cols-3';
+
     return `
       <div class="space-y-8">
         <!-- Countries Overview -->
         <div class="grid ${gridCols} gap-6">
-          ${this.countries.map(country => this.renderCountryCard(country)).join('')}
+          ${this.countries.map((country) => this.renderCountryCard(country)).join('')}
         </div>        <!-- Detailed Comparison Table -->
         <div class="overflow-x-auto">
           <table class="table table-zebra w-full">
             <thead>
               <tr>
                 <th class="text-left font-semibold">Attribute</th>
-                ${this.countries.map(country => `
+                ${this.countries
+                  .map(
+                    (country) => `
                   <th class="text-center font-semibold">
                     <div class="flex items-center justify-center space-x-2">
                       <img src="${country.flags.png}" alt="${country.name.common}" class="w-6 h-4 object-cover rounded">
                       <span>${country.name.common}</span>
                     </div>
                   </th>
-                `).join('')}
+                `
+                  )
+                  .join('')}
               </tr>
             </thead>
             <tbody>
@@ -148,8 +158,8 @@ export class CountryComparison {
         getValue: (country: Country) => ({
           raw: country.population,
           formatted: formatPopulation(country.population),
-          full: country.population.toLocaleString()
-        })
+          full: country.population.toLocaleString(),
+        }),
       },
       {
         label: 'Area (km²)',
@@ -157,8 +167,8 @@ export class CountryComparison {
         getValue: (country: Country) => ({
           raw: country.area,
           formatted: formatArea(country.area) + ' km²',
-          full: country.area.toLocaleString() + ' km²'
-        })
+          full: country.area.toLocaleString() + ' km²',
+        }),
       },
       {
         label: 'Population Density',
@@ -166,8 +176,8 @@ export class CountryComparison {
         getValue: (country: Country) => ({
           raw: country.population / country.area,
           formatted: Math.round(country.population / country.area) + '/km²',
-          full: (country.population / country.area).toFixed(2) + ' people/km²'
-        })
+          full: (country.population / country.area).toFixed(2) + ' people/km²',
+        }),
       },
       {
         label: 'Capital',
@@ -175,8 +185,8 @@ export class CountryComparison {
         getValue: (country: Country) => ({
           raw: country.capital?.[0] || 'N/A',
           formatted: country.capital?.[0] || 'No capital',
-          full: country.capital?.join(', ') || 'No capital'
-        })
+          full: country.capital?.join(', ') || 'No capital',
+        }),
       },
       {
         label: 'Region',
@@ -184,8 +194,10 @@ export class CountryComparison {
         getValue: (country: Country) => ({
           raw: country.region,
           formatted: country.region,
-          full: country.subregion ? `${country.region} (${country.subregion})` : country.region
-        })
+          full: country.subregion
+            ? `${country.region} (${country.subregion})`
+            : country.region,
+        }),
       },
       {
         label: 'Languages',
@@ -193,23 +205,25 @@ export class CountryComparison {
         getValue: (country: Country) => ({
           raw: Object.keys(country.languages || {}).length,
           formatted: Object.keys(country.languages || {}).length + ' languages',
-          full: formatLanguages(country.languages)
-        })
+          full: formatLanguages(country.languages),
+        }),
       },
       {
         label: 'Currencies',
         icon: 'payments',
         getValue: (country: Country) => ({
           raw: Object.keys(country.currencies || {}).length,
-          formatted: Object.keys(country.currencies || {}).length + ' currencies',
-          full: formatCurrencies(country.currencies)
-        })
-      }
+          formatted:
+            Object.keys(country.currencies || {}).length + ' currencies',
+          full: formatCurrencies(country.currencies),
+        }),
+      },
     ];
 
-    return attributes.map(attr => {
-      const values = this.countries.map(country => attr.getValue(country));
-      const isNumeric = typeof values[0].raw === 'number';
+    return attributes
+      .map((attr) => {
+        const values = this.countries.map((country) => attr.getValue(country));
+        const isNumeric = typeof values[0].raw === 'number';
         return `
         <tr class="hover:bg-base-200 transition-colors">
           <td class="py-3 px-4 font-medium opacity-70">
@@ -218,28 +232,36 @@ export class CountryComparison {
               <span>${attr.label}</span>
             </div>
           </td>
-          ${values.map((value) => {
-            const isHighest = isNumeric && values.every(v => v.raw <= value.raw);
-            const isLowest = isNumeric && values.every(v => v.raw >= value.raw);
-            const cellClass = isHighest && values.length > 1 ? 'text-success font-semibold' : 
-                             isLowest && values.length > 1 ? 'text-warning' : 
-                             '';
-            
-            return `
+          ${values
+            .map((value) => {
+              const isHighest =
+                isNumeric && values.every((v) => v.raw <= value.raw);
+              const isLowest =
+                isNumeric && values.every((v) => v.raw >= value.raw);
+              const cellClass =
+                isHighest && values.length > 1
+                  ? 'text-success font-semibold'
+                  : isLowest && values.length > 1
+                    ? 'text-warning'
+                    : '';
+
+              return `
               <td class="py-3 px-4 text-center ${cellClass}" title="${value.full}">
                 ${value.formatted}
                 ${isHighest && values.length > 1 ? '<span class="material-icons text-sm ml-1 text-success">trending_up</span>' : ''}
                 ${isLowest && values.length > 1 ? '<span class="material-icons text-sm ml-1 text-warning">trending_down</span>' : ''}
               </td>
             `;
-          }).join('')}
+            })
+            .join('')}
         </tr>
       `;
-    }).join('');
+      })
+      .join('');
   }
   private renderPopulationChart(): string {
-    const maxPopulation = Math.max(...this.countries.map(c => c.population));
-    
+    const maxPopulation = Math.max(...this.countries.map((c) => c.population));
+
     return `
       <div class="card bg-base-100 shadow-lg p-6">
         <h4 class="text-lg font-semibold mb-4 flex items-center">
@@ -247,9 +269,10 @@ export class CountryComparison {
           Population Comparison
         </h4>
         <div class="space-y-3">
-          ${this.countries.map(country => {
-            const percentage = (country.population / maxPopulation) * 100;
-            return `
+          ${this.countries
+            .map((country) => {
+              const percentage = (country.population / maxPopulation) * 100;
+              return `
               <div>
                 <div class="flex justify-between items-center mb-1">
                   <span class="text-sm opacity-70">${country.name.common}</span>
@@ -263,14 +286,15 @@ export class CountryComparison {
                 </div>
               </div>
             `;
-          }).join('')}
+            })
+            .join('')}
         </div>
       </div>
     `;
   }
   private renderAreaChart(): string {
-    const maxArea = Math.max(...this.countries.map(c => c.area));
-    
+    const maxArea = Math.max(...this.countries.map((c) => c.area));
+
     return `
       <div class="card bg-base-100 shadow-lg p-6">
         <h4 class="text-lg font-semibold mb-4 flex items-center">
@@ -278,9 +302,10 @@ export class CountryComparison {
           Area Comparison
         </h4>
         <div class="space-y-3">
-          ${this.countries.map(country => {
-            const percentage = (country.area / maxArea) * 100;
-            return `
+          ${this.countries
+            .map((country) => {
+              const percentage = (country.area / maxArea) * 100;
+              return `
               <div>
                 <div class="flex justify-between items-center mb-1">
                   <span class="text-sm opacity-70">${country.name.common}</span>
@@ -294,7 +319,8 @@ export class CountryComparison {
                 </div>
               </div>
             `;
-          }).join('')}
+            })
+            .join('')}
         </div>
       </div>
     `;

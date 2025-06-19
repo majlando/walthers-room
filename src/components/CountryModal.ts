@@ -1,12 +1,18 @@
 import type { Country } from '../types/country';
-import { formatPopulation, formatArea, formatCurrencies, formatLanguages } from '../utils/helpers';
+import {
+  formatPopulation,
+  formatArea,
+  formatCurrencies,
+  formatLanguages,
+} from '../utils/helpers';
 
 export class CountryModal {
   private modal: HTMLElement | null = null;
 
   constructor() {
     this.createModal();
-  }private createModal(): void {
+  }
+  private createModal(): void {
     // Create DaisyUI modal
     this.modal = document.createElement('div');
     this.modal.className = 'modal';
@@ -50,15 +56,16 @@ export class CountryModal {
     });
 
     document.body.appendChild(this.modal);
-  }  show(country: Country): void {
+  }
+  show(country: Country): void {
     const content = this.modal?.querySelector('#modal-content');
     if (!content) return;
 
     content.innerHTML = this.renderCountryDetails(country);
-    
+
     // Use DaisyUI modal classes
     this.modal?.classList.add('modal-open');
-    
+
     document.body.style.overflow = 'hidden';
   }
 
@@ -84,11 +91,17 @@ export class CountryModal {
       continents,
       car,
       cca2,
-      cca3
-    } = country;    const capitalDisplay = capital ? capital.join(', ') : 'No capital';
+      cca3,
+    } = country;
+    const capitalDisplay = capital ? capital.join(', ') : 'No capital';
     const subregionDisplay = subregion || 'No subregion';
-    const timezonesDisplay = timezones ? timezones.join(', ') : 'No timezone data';
-    const continentsDisplay = continents ? continents.join(', ') : 'No continent data';    return `
+    const timezonesDisplay = timezones
+      ? timezones.join(', ')
+      : 'No timezone data';
+    const continentsDisplay = continents
+      ? continents.join(', ')
+      : 'No continent data';
+    return `
       <div class="grid lg:grid-cols-2 gap-8">
         <!-- Flag and Basic Info -->
         <div class="space-y-6">
@@ -111,7 +124,9 @@ export class CountryModal {
               <div class="badge badge-secondary">${cca3}</div>
             </div>
 
-            ${maps?.googleMaps ? `
+            ${
+              maps?.googleMaps
+                ? `
               <a 
                 href="${maps.googleMaps}" 
                 target="_blank" 
@@ -122,12 +137,14 @@ export class CountryModal {
                 Explore on Google Maps
                 <span class="material-icons text-sm">open_in_new</span>
               </a>
-            ` : `
+            `
+                : `
               <div class="btn btn-disabled">
                 <span class="material-icons">map_off</span>
                 Maps Not Available
               </div>
-            `}
+            `
+            }
           </div>
         </div>
         
@@ -149,7 +166,9 @@ export class CountryModal {
                   </span>
                   <span class="font-medium">${region}</span>
                 </div>
-                ${subregionDisplay !== 'No subregion' ? `
+                ${
+                  subregionDisplay !== 'No subregion'
+                    ? `
                   <div class="flex items-center justify-between py-2 border-b border-primary/20 last:border-b-0">
                     <span class="font-medium opacity-70 flex items-center">
                       <span class="material-icons text-sm mr-2 text-primary">place</span>
@@ -157,7 +176,9 @@ export class CountryModal {
                     </span>
                     <span class="font-medium">${subregionDisplay}</span>
                   </div>
-                ` : ''}
+                `
+                    : ''
+                }
                 <div class="flex items-center justify-between py-2 border-b border-primary/20 last:border-b-0">
                   <span class="font-medium opacity-70 flex items-center">
                     <span class="material-icons text-sm mr-2 text-primary">location_city</span>

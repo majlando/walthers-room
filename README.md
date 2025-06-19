@@ -11,10 +11,14 @@ Welcome to **Walther's Room** - A beautiful, interactive web application showcas
 - **📊 Advanced Filtering**: Filter by regions (Africa, Americas, Asia, Europe, Oceania)
 - **🔄 Flexible Sorting**: Sort by name, population, or area (ascending/descending)
 - **📱 Responsive Design**: Beautiful UI that works on all devices
+- **⌨️ Keyboard Navigation**: Full keyboard support with arrow keys for navigation
+- **🎯 Accessibility**: ARIA labels, focus management, and screen reader support
 - **🚀 Fast Performance**: Built with Vite 6 for lightning-fast loading
-- **🎨 Modern UI**: Clean design with Tailwind CSS and Google Material Icons
+- **🎨 Modern UI**: Clean design with Tailwind CSS and DaisyUI components
 - **📖 Detailed View**: Modal with comprehensive country information
 - **🗺️ Interactive Maps**: Direct links to Google Maps for each country
+- **🔄 Error Handling**: Robust error handling with retry functionality
+- **📝 Code Quality**: ESLint and Prettier for consistent code formatting
 
 ## 🛠️ Technology Stack
 
@@ -49,6 +53,22 @@ Welcome to **Walther's Room** - A beautiful, interactive web application showcas
    ```bash
    npm run dev
    ```
+
+4. **Optional: Copy environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run type-check` - Check TypeScript types
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint errors
+- `npm run format` - Format code with Prettier
+- `npm run format:check` - Check code formatting
 
 4. **Open your browser**
    Navigate to `http://localhost:8090`

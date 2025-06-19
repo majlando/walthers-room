@@ -1,19 +1,24 @@
 import type { Country } from '../types/country';
 import { CountriesService } from '../services/countriesService';
 import { formatPopulation, formatArea } from '../utils/helpers';
+import { LoadingState } from './LoadingState';
+import { KeyboardNavigation } from '../utils/keyboardNavigation';
 
 export class FlagsApp {
   private countries: Country[] = [];
   private filteredCountries: Country[] = [];
   private searchTerm = '';
   private selectedRegion = 'all';
+  private loadingState: LoadingState | null = null;
+  private keyboardNavigation: KeyboardNavigation | null = null;
 
   constructor() {
     this.init();
   }
-
   private async init(): Promise<void> {
     this.createLayout();
+    this.loadingState = new LoadingState('loading');
+    this.keyboardNavigation = new KeyboardNavigation();
     this.attachEventListeners();
     await this.loadCountries();
   }
@@ -117,7 +122,6 @@ export class FlagsApp {
       });
     }
   }
-
   private async loadCountries(): Promise<void> {
     try {
       this.countries = await CountriesService.getAllCountries();
@@ -126,29 +130,35 @@ export class FlagsApp {
       this.renderCountries();
     } catch (error) {
       console.error('Error loading countries:', error);
-      this.showError();
+      this.showError(
+        error instanceof Error ? error.message : 'Failed to load countries'
+      );
     }
   }
 
   private filterAndRenderCountries(): void {
-    this.filteredCountries = this.countries.filter(country => {
-      const matchesSearch = !this.searchTerm || 
-        country.name.common.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        country.capital?.[0]?.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
-      const matchesRegion = this.selectedRegion === 'all' || 
-        country.region === this.selectedRegion;
-      
+    this.filteredCountries = this.countries.filter((country) => {
+      const matchesSearch =
+        !this.searchTerm ||
+        country.name.common
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase()) ||
+        country.capital?.[0]
+          ?.toLowerCase()
+          .includes(this.searchTerm.toLowerCase());
+
+      const matchesRegion =
+        this.selectedRegion === 'all' || country.region === this.selectedRegion;
+
       return matchesSearch && matchesRegion;
     });
 
     this.renderCountries();
   }
-
   private renderCountries(): void {
     const grid = document.getElementById('countries-grid');
     const noResults = document.getElementById('no-results');
-    
+
     if (!grid || !noResults) return;
 
     if (this.filteredCountries.length === 0) {
@@ -159,17 +169,22 @@ export class FlagsApp {
 
     noResults.classList.add('hidden');
     grid.classList.remove('hidden');
-    
+
     grid.innerHTML = this.filteredCountries
-      .map(country => this.createCountryCard(country))
+      .map((country) => this.createCountryCard(country))
       .join('');
+
+    // Make cards focusable for keyboard navigation
+    if (this.keyboardNavigation) {
+      this.keyboardNavigation.makeCardsFocusable();
+    }
 
     // Add click listeners to cards
     grid.addEventListener('click', (e) => {
       const card = (e.target as Element).closest('[data-country-code]');
       if (card) {
         const countryCode = card.getAttribute('data-country-code');
-        const country = this.countries.find(c => c.cca2 === countryCode);
+        const country = this.countries.find((c) => c.cca2 === countryCode);
         if (country) {
           this.showCountryModal(country);
         }
@@ -180,9 +195,12 @@ export class FlagsApp {
   private createCountryCard(country: Country): string {
     const { name, flags, population, area, capital, region, cca2 } = country;
     const capitalDisplay = capital?.[0] || 'N/A';
-
     return `
-      <div class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow cursor-pointer" data-country-code="${cca2}">
+      <div class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow cursor-pointer country-card" 
+           data-country-code="${cca2}"
+           tabindex="-1"
+           role="button"
+           aria-label="View details for ${name.common}">
         <figure class="h-48">
           <img 
             src="${flags.png}" 
@@ -207,15 +225,30 @@ export class FlagsApp {
   private showCountryModal(country: Country): void {
     const modal = document.getElementById('country-modal') as HTMLDialogElement;
     const content = document.getElementById('modal-content');
-    
+
     if (!modal || !content) return;
 
-    const { name, flags, population, area, capital, region, subregion, currencies, languages } = country;
-    
+    const {
+      name,
+      flags,
+      population,
+      area,
+      capital,
+      region,
+      subregion,
+      currencies,
+      languages,
+    } = country;
+
     const capitalDisplay = capital?.join(', ') || 'N/A';
-    const currencyDisplay = currencies ? 
-      Object.values(currencies).map(c => `${c.name} (${c.symbol})`).join(', ') : 'N/A';
-    const languageDisplay = languages ? Object.values(languages).join(', ') : 'N/A';
+    const currencyDisplay = currencies
+      ? Object.values(currencies)
+          .map((c) => `${c.name} (${c.symbol})`)
+          .join(', ')
+      : 'N/A';
+    const languageDisplay = languages
+      ? Object.values(languages).join(', ')
+      : 'N/A';
 
     content.innerHTML = `
       <div class="text-center mb-6">
@@ -248,23 +281,22 @@ export class FlagsApp {
 
     modal.showModal();
   }
-
   private hideLoading(): void {
-    const loading = document.getElementById('loading');
-    if (loading) {
-      loading.classList.add('hidden');
+    if (this.loadingState) {
+      this.loadingState.hide();
     }
   }
+  private showError(message: string = 'An error occurred'): void {
+    if (this.loadingState) {
+      this.loadingState.showError(message, () => {
+        this.loadingState?.show('Loading countries...');
+        this.loadCountries();
+      });
+    }
 
-  private showError(): void {
-    const loading = document.getElementById('loading');
-    if (loading) {
-      loading.innerHTML = `
-        <div class="text-center py-12">
-          <p class="text-error text-lg mb-4">Failed to load countries</p>
-          <button class="btn btn-primary" onclick="location.reload()">Try Again</button>
-        </div>
-      `;
+    const gridElement = document.getElementById('countries-grid');
+    if (gridElement) {
+      gridElement.classList.add('hidden');
     }
   }
 }

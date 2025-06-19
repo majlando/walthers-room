@@ -27,17 +27,21 @@ export class FavoritesManager {
   }
 
   isFavorite(cca2: string): boolean {
-    return this.favorites.some(fav => fav.cca2 === cca2);
+    return this.favorites.some((fav) => fav.cca2 === cca2);
   }
 
-  addFavorite(country: { cca2: string; name: { common: string }; flags: { png: string } }): void {
+  addFavorite(country: {
+    cca2: string;
+    name: { common: string };
+    flags: { png: string };
+  }): void {
     if (this.isFavorite(country.cca2)) return;
 
     const favorite: FavoriteCountry = {
       cca2: country.cca2,
       name: country.name.common,
       flag: country.flags.png,
-      addedAt: Date.now()
+      addedAt: Date.now(),
     };
 
     this.favorites.unshift(favorite); // Add to beginning
@@ -46,7 +50,7 @@ export class FavoritesManager {
   }
 
   removeFavorite(cca2: string): void {
-    const index = this.favorites.findIndex(fav => fav.cca2 === cca2);
+    const index = this.favorites.findIndex((fav) => fav.cca2 === cca2);
     if (index !== -1) {
       this.favorites.splice(index, 1);
       this.saveFavorites();
@@ -54,7 +58,11 @@ export class FavoritesManager {
     }
   }
 
-  toggleFavorite(country: { cca2: string; name: { common: string }; flags: { png: string } }): boolean {
+  toggleFavorite(country: {
+    cca2: string;
+    name: { common: string };
+    flags: { png: string };
+  }): boolean {
     if (this.isFavorite(country.cca2)) {
       this.removeFavorite(country.cca2);
       return false;
@@ -95,7 +103,7 @@ export class FavoritesManager {
   }
 
   private notifyCallbacks(): void {
-    this.callbacks.forEach(callback => callback(this.favorites));
+    this.callbacks.forEach((callback) => callback(this.favorites));
   }
 
   // Get favorites count
@@ -111,7 +119,7 @@ export class FavoritesManager {
   // Search favorites
   searchFavorites(query: string): FavoriteCountry[] {
     const searchTerm = query.toLowerCase();
-    return this.favorites.filter(fav => 
+    return this.favorites.filter((fav) =>
       fav.name.toLowerCase().includes(searchTerm)
     );
   }

@@ -1,5 +1,8 @@
 import type { Country } from '../types/country';
-import { FavoritesManager, type FavoriteCountry } from '../utils/favoritesManager';
+import {
+  FavoritesManager,
+  type FavoriteCountry,
+} from '../utils/favoritesManager';
 
 export class FavoritesPanel {
   private panel: HTMLElement | null = null;
@@ -112,7 +115,9 @@ export class FavoritesPanel {
     compareBtn?.addEventListener('click', () => this.compareFavorites());
 
     // Search favorites
-    const searchInput = this.panel?.querySelector('#favorites-search') as HTMLInputElement;
+    const searchInput = this.panel?.querySelector(
+      '#favorites-search'
+    ) as HTMLInputElement;
     searchInput?.addEventListener('input', (e) => {
       const query = (e.target as HTMLInputElement).value;
       this.filterFavorites(query);
@@ -122,10 +127,12 @@ export class FavoritesPanel {
     this.favoritesManager.onFavoritesChange((favorites) => {
       this.updateFavoritesList(favorites);
       this.updateCompareButton(favorites);
-    });    // Escape key
+    }); // Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        const toggle = this.panel?.querySelector('#favorites-drawer-toggle') as HTMLInputElement;
+        const toggle = this.panel?.querySelector(
+          '#favorites-drawer-toggle'
+        ) as HTMLInputElement;
         if (toggle?.checked) {
           this.close();
         }
@@ -133,11 +140,13 @@ export class FavoritesPanel {
     });
   }
   show(): void {
-    const toggle = this.panel?.querySelector('#favorites-drawer-toggle') as HTMLInputElement;
+    const toggle = this.panel?.querySelector(
+      '#favorites-drawer-toggle'
+    ) as HTMLInputElement;
     if (toggle) {
       toggle.checked = true;
     }
-    
+
     // Load current favorites
     const favorites = this.favoritesManager.getFavorites();
     this.updateFavoritesList(favorites);
@@ -145,7 +154,9 @@ export class FavoritesPanel {
   }
 
   close(): void {
-    const toggle = this.panel?.querySelector('#favorites-drawer-toggle') as HTMLInputElement;
+    const toggle = this.panel?.querySelector(
+      '#favorites-drawer-toggle'
+    ) as HTMLInputElement;
     if (toggle) {
       toggle.checked = false;
     }
@@ -155,7 +166,7 @@ export class FavoritesPanel {
     const listContainer = this.panel?.querySelector('#favorites-list');
     const emptyState = this.panel?.querySelector('#favorites-empty');
     const countElement = this.panel?.querySelector('#favorites-count');
-    
+
     if (!listContainer || !emptyState || !countElement) return;
 
     // Update count
@@ -166,12 +177,14 @@ export class FavoritesPanel {
       emptyState.classList.remove('hidden');
     } else {
       emptyState.classList.add('hidden');
-      listContainer.innerHTML = favorites.map(favorite => this.renderFavoriteItem(favorite)).join('');
+      listContainer.innerHTML = favorites
+        .map((favorite) => this.renderFavoriteItem(favorite))
+        .join('');
     }
   }
   private renderFavoriteItem(favorite: FavoriteCountry): string {
     const addedDate = new Date(favorite.addedAt).toLocaleDateString();
-    
+
     return `
       <div class="favorite-item card card-compact bg-base-100 mb-3 shadow-sm hover:shadow-md transition-all duration-200 group" data-cca2="${favorite.cca2}">
         <div class="card-body">
@@ -219,15 +232,24 @@ export class FavoritesPanel {
   }
 
   private updateCompareButton(favorites: FavoriteCountry[]): void {
-    const compareBtn = this.panel?.querySelector('#compare-favorites') as HTMLButtonElement;
+    const compareBtn = this.panel?.querySelector(
+      '#compare-favorites'
+    ) as HTMLButtonElement;
     if (compareBtn) {
       compareBtn.disabled = favorites.length < 2;
-      compareBtn.title = favorites.length < 2 ? 'Add at least 2 countries to compare' : 'Compare selected favorites';
+      compareBtn.title =
+        favorites.length < 2
+          ? 'Add at least 2 countries to compare'
+          : 'Compare selected favorites';
     }
   }
 
   private clearFavorites(): void {
-    if (confirm('Are you sure you want to remove all favorites? This action cannot be undone.')) {
+    if (
+      confirm(
+        'Are you sure you want to remove all favorites? This action cannot be undone.'
+      )
+    ) {
       this.favoritesManager.clearFavorites();
     }
   }

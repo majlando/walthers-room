@@ -16,7 +16,7 @@
   .card:hover {
     @apply shadow-lg;
   }
-  
+
   /* Modal backdrop blur */
   .modal-backdrop {
     @apply backdrop-blur-sm;
