@@ -1,0 +1,6 @@
+src/utils/helpers.simple.ts
+src/types/country.simple.ts
+src/style.simple.css
+src/main.simple.ts
+src/components/FlagsApp.simple.ts
+package.simple.json
